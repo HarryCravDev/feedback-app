@@ -1,0 +1,23 @@
+.rating-bubble {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.9rem;
+	height: 1.9rem;
+	border-radius: 50%;
+	background-color: rgb(252, 220, 39);
+	vertical-align: middle;
+	transform: translate(-20%, -25%);
+}
+
+.remove-feedback-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.9rem;
+	height: 1.9rem;
+	border-radius: 50%;
+	background-color: rgb(252, 220, 39);
+	vertical-align: middle;
+	transform: translate(-20%, -25%);
+}
