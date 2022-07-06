@@ -1,5 +1,5 @@
 export interface IFeedback {
-	id: number;
+	id: number | string;
 	title: string;
 	description: string;
 	rating: number;

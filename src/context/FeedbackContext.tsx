@@ -5,8 +5,8 @@ import { IFeedback } from "../types/IFeedback";
 interface IFeedbackContext {
 	feedbackData: IFeedback[];
 	addFeedback: (feedback: IFeedback) => void;
-	removeFeedback: (id: number) => void;
-	getFeedbackById: (id: number) => IFeedback | undefined;
+	removeFeedback: (id: number | string) => void;
+	getFeedbackById: (id: number | string) => IFeedback | undefined;
 }
 
 const FeedbackContext = createContext({} as IFeedbackContext);
@@ -18,11 +18,11 @@ export const FeedbackProvider = ({ children }: { children: ReactNode }) => {
 		setFeedbackData([...feedbackData, feedback]);
 	};
 
-	const getFeedbackById = (id: number) => {
+	const getFeedbackById = (id: number | string) => {
 		return feedbackData.find((item) => item.id === id);
 	};
 
-	const removeFeedback = (id: number) => {
+	const removeFeedback = (id: number | string) => {
 		setFeedbackData(feedbackData.filter((item) => item.id !== id));
 	};
 
