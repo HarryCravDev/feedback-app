@@ -14,7 +14,7 @@ const FeedbackStats = () => {
 			<h2>{feedbackData.length} Reviews</h2>
 			<h2>
 				Average Ratings:{" "}
-				{isNaN(averageFeedbackRating) ? 0 : averageFeedbackRating}
+				{isNaN(averageFeedbackRating) ? 0 : averageFeedbackRating.toFixed(2)}
 			</h2>
 		</div>
 	);
