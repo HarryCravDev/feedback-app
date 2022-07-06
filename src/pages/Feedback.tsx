@@ -1,20 +1,22 @@
 import { useState } from "react";
-import { Col, Row } from "antd";
+import { Col, Row, Spin } from "antd";
 import FeedbackItem from "../components/feedback-item/FeedbackItem";
 import { FeedbackData } from "../data/FeedbackData";
 import { IFeedback } from "../types/IFeedback";
 import { useFeedbackContext } from "../context/FeedbackContext";
 
 const Feedback = () => {
-	// const [feedbackData, setFeedbackData] = useState<IFeedback[]>(FeedbackData);
-
-	const { feedbackData } = useFeedbackContext();
+	const { feedbackData, isLoading } = useFeedbackContext();
 
 	if (!feedbackData || feedbackData.length === 0) {
 		return <p>No Feedback Data</p>;
 	}
 
-	return (
+	return isLoading ? (
+		<div style={{ textAlign: "center" }}>
+			<Spin size="large" />
+		</div>
+	) : (
 		<Row
 			gutter={[
 				{ sm: 0, md: 12, lg: 16 },
