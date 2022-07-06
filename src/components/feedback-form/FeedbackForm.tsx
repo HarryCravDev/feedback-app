@@ -1,42 +1,95 @@
 import React, { useState } from "react";
-import { Button, Form, Input, Card } from "antd";
+import { Button, Input, Card, Alert, Radio } from "antd";
+import { useFeedbackContext } from "../../context/FeedbackContext";
+import { v4 as uuidv4 } from "uuid";
 
 const FeedbackForm = () => {
-	const [value, setValue] = useState<string>("");
+	const { addFeedback } = useFeedbackContext();
+
+	const [feedbackTitle, setFeedbackTitle] = useState<string>("");
+	const [feedbackDescription, setFeedbackDescription] = useState<string>("");
+	const [rating, setRating] = useState<number | null>(null);
+	const [error, setError] = useState<boolean>(false);
+	const [success, setSuccess] = useState<boolean>(false);
+
+	const handleSubmit = () => {
+		let timeout: NodeJS.Timeout;
+
+		if (feedbackDescription.length < 10) {
+			setError(true);
+
+			timeout = setTimeout(() => {
+				setError(false);
+				clearTimeout(timeout);
+			}, 3000);
+
+			return;
+		}
+
+		setSuccess(true);
+
+		timeout = setTimeout(() => {
+			setSuccess(false);
+			clearTimeout(timeout);
+		}, 3000);
+
+		addFeedback({
+			id: uuidv4(),
+			title: feedbackTitle,
+			description: feedbackDescription,
+			rating: rating!,
+		});
+
+		setFeedbackTitle("");
+		setFeedbackDescription("");
+		setRating(null);
+	};
 
 	return (
-		<div className="Heloooo">
-			<Card>
-				<h2>Enter Feedback</h2>
-				<Form
-					name="basic"
-					labelCol={{ span: 8 }}
-					wrapperCol={{ span: 16 }}
-					initialValues={{ remember: true }}
-					autoComplete="off"
-					style={{
-						display: "flex",
-						justifyContent: "center",
-						alignItems: "center",
-						flexDirection: "column",
-					}}
-				>
-					<Form.Item
-						// label="Feedback"
-						// name="feedback"
-						rules={[{ required: true, message: "Please input your feedback!" }]}
-					>
-						<Input.TextArea onChange={(e) => setValue(e.target.value)} />
-					</Form.Item>
-
-					<Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-						<Button type="primary" htmlType="submit">
-							Submit
-						</Button>
-					</Form.Item>
-				</Form>
-			</Card>
-		</div>
+		<Card>
+			{error && (
+				<Alert
+					message="Please enter at least 10 characters"
+					type="error"
+					showIcon
+				/>
+			)}
+			{success && (
+				<Alert message="Feedback submitted" type="success" showIcon />
+			)}
+			<h2>Enter Feedback</h2>
+			<Input
+				placeholder="Feedback Title"
+				value={feedbackTitle}
+				onChange={(e) => setFeedbackTitle(e.target.value)}
+			/>
+			<Radio.Group
+				onChange={(e) => setRating(e.target.value)}
+				value={rating}
+				style={{ marginTop: "0.5rem" }}
+			>
+				{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((number) => (
+					<Radio key={number} value={number}>
+						{number}
+					</Radio>
+				))}
+			</Radio.Group>
+			<Input.TextArea
+				placeholder="Feedback Description"
+				onChange={(e) => setFeedbackDescription(e.target.value)}
+				style={{ marginTop: "0.5rem" }}
+				value={feedbackDescription}
+			/>
+			<Button
+				type="primary"
+				htmlType="submit"
+				onClick={handleSubmit}
+				style={{ marginTop: "0.5rem" }}
+				disabled={!feedbackDescription || !rating || !feedbackTitle}
+			>
+				Submit
+			</Button>
+		</Card>
 	);
 };
 
