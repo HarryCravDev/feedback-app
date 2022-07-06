@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Input, Card, Alert, Radio } from "antd";
 import { useFeedbackContext } from "../../context/FeedbackContext";
 import { v4 as uuidv4 } from "uuid";
 
 const FeedbackForm = () => {
-	const { addFeedback } = useFeedbackContext();
+	const {
+		addFeedback,
+		feedbackEdit,
+		updateFeedbackItem,
+		clearEditFeedbackItem,
+	} = useFeedbackContext();
 
 	const [feedbackTitle, setFeedbackTitle] = useState<string>("");
 	const [feedbackDescription, setFeedbackDescription] = useState<string>("");
@@ -12,33 +17,61 @@ const FeedbackForm = () => {
 	const [error, setError] = useState<boolean>(false);
 	const [success, setSuccess] = useState<boolean>(false);
 
+	useEffect(() => {
+		if (feedbackEdit.isEditing) {
+			setFeedbackTitle(feedbackEdit.item!.title);
+			setFeedbackDescription(feedbackEdit.item!.description);
+			setRating(feedbackEdit.item!.rating);
+		} else {
+			setFeedbackTitle("");
+			setFeedbackDescription("");
+			setRating(null);
+		}
+	}, [feedbackEdit]);
+
 	const handleSubmit = () => {
 		let timeout: NodeJS.Timeout;
 
-		if (feedbackDescription.length < 10) {
-			setError(true);
+		if (!feedbackEdit.isEditing) {
+			if (feedbackDescription.length < 10) {
+				setError(true);
+
+				timeout = setTimeout(() => {
+					setError(false);
+					clearTimeout(timeout);
+				}, 3000);
+
+				return;
+			}
+
+			setSuccess(true);
 
 			timeout = setTimeout(() => {
-				setError(false);
+				setSuccess(false);
 				clearTimeout(timeout);
 			}, 3000);
 
-			return;
+			addFeedback({
+				id: uuidv4(),
+				title: feedbackTitle,
+				description: feedbackDescription,
+				rating: rating!,
+			});
+		} else {
+			setSuccess(true);
+
+			timeout = setTimeout(() => {
+				setSuccess(false);
+				clearTimeout(timeout);
+			}, 3000);
+
+			updateFeedbackItem({
+				...feedbackEdit.item!,
+				title: feedbackTitle,
+				description: feedbackDescription,
+				rating: rating!,
+			});
 		}
-
-		setSuccess(true);
-
-		timeout = setTimeout(() => {
-			setSuccess(false);
-			clearTimeout(timeout);
-		}, 3000);
-
-		addFeedback({
-			id: uuidv4(),
-			title: feedbackTitle,
-			description: feedbackDescription,
-			rating: rating!,
-		});
 
 		setFeedbackTitle("");
 		setFeedbackDescription("");
@@ -57,7 +90,7 @@ const FeedbackForm = () => {
 			{success && (
 				<Alert message="Feedback submitted" type="success" showIcon />
 			)}
-			<h2>Enter Feedback</h2>
+			<h2>{!feedbackEdit.item ? "Enter Feedback" : "Edit Feedback"}</h2>
 			<Input
 				placeholder="Feedback Title"
 				value={feedbackTitle}
@@ -80,15 +113,38 @@ const FeedbackForm = () => {
 				style={{ marginTop: "0.5rem" }}
 				value={feedbackDescription}
 			/>
-			<Button
-				type="primary"
-				htmlType="submit"
-				onClick={handleSubmit}
-				style={{ marginTop: "0.5rem" }}
-				disabled={!feedbackDescription || !rating || !feedbackTitle}
-			>
-				Submit
-			</Button>
+			{!feedbackEdit.isEditing ? (
+				<Button
+					type="primary"
+					htmlType="submit"
+					onClick={handleSubmit}
+					style={{ marginTop: "0.5rem" }}
+					disabled={!feedbackDescription || !rating || !feedbackTitle}
+				>
+					Submit
+				</Button>
+			) : (
+				<div>
+					<Button
+						type="primary"
+						htmlType="submit"
+						onClick={handleSubmit}
+						style={{ marginTop: "0.5rem" }}
+						disabled={!feedbackDescription || !rating || !feedbackTitle}
+					>
+						Confirm Changes
+					</Button>
+					<Button
+						type="primary"
+						htmlType="submit"
+						onClick={clearEditFeedbackItem}
+						style={{ marginTop: "0.5rem", marginLeft: "0.5rem" }}
+						danger
+					>
+						Cancel
+					</Button>
+				</div>
+			)}
 		</Card>
 	);
 };

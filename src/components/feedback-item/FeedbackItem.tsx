@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, Button } from "antd";
 import "./FeedbackItem.css";
 import { IFeedback } from "../../types/IFeedback";
-import { CloseCircleOutlined } from "@ant-design/icons";
+import { CloseCircleOutlined, EditOutlined } from "@ant-design/icons";
 import { useFeedbackContext } from "../../context/FeedbackContext";
 
 const FeedbackItem: React.FC<IFeedback> = ({
@@ -11,7 +11,7 @@ const FeedbackItem: React.FC<IFeedback> = ({
 	description,
 	rating = 0,
 }) => {
-	const { removeFeedback } = useFeedbackContext();
+	const { removeFeedback, editFeedback } = useFeedbackContext();
 
 	return (
 		<Card title={title} style={{ position: "relative" }}>
@@ -33,10 +33,10 @@ const FeedbackItem: React.FC<IFeedback> = ({
 			/>
 			<p>{description}</p>
 			<Button
-				onClick={() => console.log({ id, title, description, rating })}
+				onClick={() => editFeedback({ id, title, description, rating })}
 				type="primary"
 			>
-				Useless Button
+				Edit <EditOutlined />
 			</Button>
 		</Card>
 	);
