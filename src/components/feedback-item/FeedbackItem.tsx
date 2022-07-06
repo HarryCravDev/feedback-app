@@ -11,8 +11,6 @@ const FeedbackItem: React.FC<IFeedback> = ({
 	description,
 	rating = 0,
 }) => {
-	const [ratingValue, setRatingValue] = useState<number>(rating);
-
 	const { removeFeedback } = useFeedbackContext();
 
 	return (
@@ -21,7 +19,7 @@ const FeedbackItem: React.FC<IFeedback> = ({
 				className="rating-bubble"
 				style={{ position: "absolute", top: 0, left: 0 }}
 			>
-				{ratingValue}
+				{rating}
 			</p>
 			<CloseCircleOutlined
 				style={{
@@ -35,10 +33,10 @@ const FeedbackItem: React.FC<IFeedback> = ({
 			/>
 			<p>{description}</p>
 			<Button
-				onClick={() => setRatingValue((rating) => rating + 1)}
+				onClick={() => console.log({ id, title, description, rating })}
 				type="primary"
 			>
-				Add Rating
+				Useless Button
 			</Button>
 		</Card>
 	);
